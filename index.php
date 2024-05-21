@@ -41,7 +41,7 @@
             </div>
             <div class="mt-8">
                 <audio controls class="w-64">
-                    <source src="images\Bumble Love.mp3" type="audio/mpeg">
+                    <source id="audioPlayer" src="images\Bumble Love.mp3" type="audio/mpeg">
                     Love song generate by AI - Bumble Love.
                 </audio>
             </div>
