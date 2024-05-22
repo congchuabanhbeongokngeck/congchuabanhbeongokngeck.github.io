@@ -1,9 +1,6 @@
 <html lang="vi">
     <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
