@@ -5,7 +5,6 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
-        <title>Fireworks Display</title>
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -16,18 +15,30 @@
                 align-items: center;
                 display: flex;
             }
+
+            i {
+                font-size: 24px;
+                margin-top: auto;
+                margin-bottom: auto;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+            
+            div.flex.items-center.justify-around {
+                justify-content: center;
+                align-items: center;
+                display: flex;
+            }
+
             canvas {
                 position: fixed;
-                top: 0;
-                left: 0;
-                z-index: -1;
                 display: block;
+                z-index: -1;
             }
         </style>
     </head>
     <body class="flex flex-col items-center justify-center min-h-screen">
         <canvas id="fireworksCanvas"></canvas>
-
         <div class="text-center">
             <h1 class="text-3xl font-semibold text-pink-600 mb-10">LOVE DAYS</h1>
             <div class="bg-pink-100 p-4 rounded-lg mb-8">
@@ -41,7 +52,6 @@
                 </div>
                 <div class="flex flex-col items-center">
                     <i class="fas fa-heart text-pink-600 text-xl mb-4"></i>
-                    <p class="text-gray-800">20-10-2023</p>
                 </div>
                 <div class="flex flex-col items-center">
                     <img class="rounded-full w-24 h-24 mb-4" src="images\Ha.jpg" alt="Profile picture of the second person" sizeof="100px">
@@ -56,6 +66,10 @@
             </div>
         </div>
         <script>
+            function playAudio() {
+                const audio = document.getElementsByID('audioPlayer');
+                audio.play();
+            }
             function celeb_firework() {
                 const canvas = document.getElementById('fireworksCanvas');
                 const ctx = canvas.getContext('2d');
@@ -195,13 +209,13 @@
                 if (diff.days == 0) {
                     celeb_firework();
                     if (diff.years == 0) {
-                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.months} months 🎉🎉🎉`;
+                        ymd_count = `🎉 Happy anniversary ${diff.months} months 🎉`;
                     }
                     else if (diff.months == 0) {
-                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.years} years 🎉🎉🎉`;
+                        ymd_count = `🎉 Happy anniversary ${diff.years} years 🎉`;
                     } 
                     else {
-                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.years} years, ${diff.months} months 🎉🎉🎉`;
+                        ymd_count = `🎉 Happy anniversary ${diff.years} years, ${diff.months} months 🎉`;
                     }
                 }
 
@@ -213,6 +227,8 @@
                 }
             }
             calculateDifference();
+            playAudio();
+            setInterval(calculateDifference, 1000);
         </script>
     </body>
 </html>
