@@ -5,6 +5,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+        <title>Fireworks Display</title>
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -15,9 +16,18 @@
                 align-items: center;
                 display: flex;
             }
+            canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: -1;
+                display: block;
+            }
         </style>
     </head>
     <body class="flex flex-col items-center justify-center min-h-screen">
+        <canvas id="fireworksCanvas"></canvas>
+
         <div class="text-center">
             <h1 class="text-3xl font-semibold text-pink-600 mb-10">LOVE DAYS</h1>
             <div class="bg-pink-100 p-4 rounded-lg mb-8">
@@ -46,21 +56,163 @@
             </div>
         </div>
         <script>
-            var countDownDate = new Date("Oct 20, 2023 00:00:00").getTime();
-            var x = setInterval(function() {
-                var now = new Date().getTime();
-                var distance = now - countDownDate;
-                var days_count = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var years = Math.floor(days_count / 365);
-                var months = Math.floor(days_count % 365 / 30);
-                var days = Math.floor(days_count % 365 % 30);
-                document.getElementById("days_count").innerHTML = days_count + " days";
-                document.getElementById("ymd_count").innerHTML = years + " years " + months + " months " + days + " days";
+            function celeb_firework() {
+                const canvas = document.getElementById('fireworksCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+        
+                class Firework {
+                    constructor(x, y) {
+                        this.x = x;
+                        this.y = y;
+                        this.explosionRadius = 2;
+                        this.maxRadius = Math.random() * 20 + 20;
+                        this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                        this.exploded = false;
+                        this.particles = [];
+                    }
+        
+                    update() {
+                        if (!this.exploded) {
+                            this.explosionRadius += 2;
+                            if (this.explosionRadius >= this.maxRadius) {
+                                this.exploded = true;
+                                this.createParticles();
+                            }
+                        } else {
+                            this.particles.forEach(particle => particle.update());
+                            this.particles = this.particles.filter(particle => particle.alpha > 0);
+                        }
+                    }
+        
+                    draw() {
+                        if (!this.exploded) {
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.explosionRadius, 0, Math.PI * 2);
+                            ctx.fillStyle = this.color;
+                            ctx.fill();
+                        } else {
+                            this.particles.forEach(particle => particle.draw());
+                        }
+                    }
+        
+                    createParticles() {
+                        for (let i = 0; i < 100; i++) {
+                            this.particles.push(new Particle(this.x, this.y, this.color));
+                        }
+                    }
+                }
+        
+                class Particle {
+                    constructor(x, y, color) {
+                        this.x = x;
+                        this.y = y;
+                        this.color = color;
+                        this.radius = Math.random() * 2 + 1;
+                        this.angle = Math.random() * 2 * Math.PI;
+                        this.speed = Math.random() * 2 + 1;
+                        this.friction = 0.99;
+                        this.gravity = 0.05;
+                        this.alpha = 1;
+                        this.decay = Math.random() * 0.015 + 0.015;
+                    }
+        
+                    update() {
+                        this.speed *= this.friction;
+                        this.x += Math.cos(this.angle) * this.speed;
+                        this.y += Math.sin(this.angle) * this.speed + this.gravity;
+                        this.alpha -= this.decay;
+                    }
+        
+                    draw() {
+                        ctx.save();
+                        ctx.globalAlpha = this.alpha;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+        
+                const fireworks = [];
+        
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (Math.random() < 0.05) {
+                        fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height));
+                    }
+                    fireworks.forEach((firework, index) => {
+                        firework.update();
+                        firework.draw();
+                        if (firework.exploded && firework.particles.length === 0) {
+                            fireworks.splice(index, 1);
+                        }
+                    });
+                    requestAnimationFrame(animate);
+                }
+        
+                animate();
+            }
+            
+            function dateDifference(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+    
+                let years = end.getFullYear() - start.getFullYear();
+                let months = end.getMonth() - start.getMonth();
+                let days = end.getDate() - start.getDate();
+                let totalDays = 0;
+    
+                if (days < 0) {
+                    months--;
+                    const previousMonth = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+                    days += previousMonth;
+                }
+    
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+    
+                return { years, months, days, totalDays };
+            }
+
+            function calculateDifference() {
+                const startDate = new Date("Oct 20, 2023 00:00:00").getTime();
+                const endDate = new Date().getTime();
+    
+                const diff = dateDifference(startDate, endDate);
+                ymd_count = `${diff.years} years, ${diff.months} months, and ${diff.days} days`;
+
+                if (diff.years == 0) {
+                    ymd_count = `${diff.months} months, and ${diff.days} days`;
+                }
+                
+                if (diff.days == 0) {
+                    celeb_firework();
+                    if (diff.years == 0) {
+                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.months} months 🎉🎉🎉`;
+                    }
+                    else if (diff.months == 0) {
+                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.years} years 🎉🎉🎉`;
+                    } 
+                    else {
+                        ymd_count = `🎉🎉🎉 Happy anniversary ${diff.years} years, ${diff.months} months 🎉🎉🎉`;
+                    }
+                }
+
+                document.getElementById("days_count").innerHTML = `${diff.totalDays} days`;
+                document.getElementById("ymd_count").innerHTML = ymd_count;
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("countdown").innerHTML = "EXPIRED";
                 }
-            }, 1000);
+            }
+            calculateDifference();
         </script>
     </body>
 </html>
